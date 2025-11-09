@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Team | open4u{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <h2>Introduce Our Team</h2>
+  <h1 class="main-title">open4u</h1>
+  <p class="subtitle">오픈소스(Open Source), 네 명의 팀원(4), 그리고 당신을 위한(For You)</p>
+  <div class="desc"></div>
+ <div class="dots">
+  <span>.</span><br>
+  <span>.</span><br>
+  <span>.</span>
+</div>
+  
+  <div class="desc">
+    <p>이 세 가지 의미를 담아 open4u라는 이름을 선택했습니다.</p>
+    <p>우리는 모두가 함께 배우고 성장할 수 있는 오픈소스 정신을 바탕으로,</p>
+    <p>각자의 개성과 역량을 모아 세상을 조금 더 열린(Open) 방향으로 바꾸고자 합니다.</p>
+    <p>오픈소스의 가치와 네 명의 팀워크로 세상을 여는 open4u,</p>
+    <p>네잎클로버처럼 희망·믿음·사랑·행운을 품고,</p>
+    <p>모두에게 열린 기술을 만들어갑니다.</p>
+  </div>
+
+  <img src="{{ url_for('static', filename='img/clover.png') }}" alt="clover" class="clover" />
+</section>
+
+
+
+<!-- ✅ 팀 섹션 -->
+<section class="team">
+  <h2>Introduce</h2> 
+  <h1>Our Team Member</h1>
+  <div class="team-grid">
+
+    <div class="card" onclick="alert('어수빈의 상세페이지')">
+      <div class="card-header">
+        <span class="member-name">어수빈</span>
+        <span class="member-role">Team Leader, FE</span>
+      </div>
+      <img src="{{ url_for('static', filename='img/memozi_subin.png') }}" alt="어수빈">
+    </div>
+
+    <div class="card" onclick="alert('김유라의 상세페이지')">
+      <div class="card-header">
+        <span class="member-name">김유라</span>
+        <span class="member-role">FE</span>
+      </div>
+      <img src="{{ url_for('static', filename='img/memozi_yura.png') }}" alt="김유라">
+    </div>
+
+    <div class="card" onclick="alert('민지원의 상세페이지')">
+      <div class="card-header">
+        <span class="member-name">민지원</span>
+        <span class="member-role">BE</span>
+      </div>
+      <img src="{{ url_for('static', filename='img/memozi_jiwon.png') }}" alt="민지원">
+    </div>
+
+    <div class="card" onclick="alert('장소은의 상세페이지')">
+      <div class="card-header">
+        <span class="member-name">장소은</span>
+        <span class="member-role">BE</span>
+      </div>
+      <img src="{{ url_for('static', filename='img/memozi_soeun.png') }}" alt="장소은">
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ✅ 비하인드 영상 (가이드라인 상태) -->
+<section class="behind">
+  <h3>Together, We Build</h3>
+  <h2>Behind the Scenes of Open4U</h2>
+  <div class="video-container">
+    <div class="video-placeholder">
+      <p>🎬 Behind the Scenes 영상이 들어갈 자리입니다.</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
