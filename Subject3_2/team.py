@@ -84,12 +84,16 @@ def member_detail(username):
 def input_page():
     username = request.args.get("username")
     member = get_member_by_username(username) if username else None
-    return render_template("input.html", member=member)
+    return render_template("input.html", member=member, is_new=(member is None))
 
 # 멤버 정보 업데이트 페이지
 @app.route("/member/update", methods=["POST"])
 def update_member():
-    username = request.form.get("github_username")  # hidden으로 실사용 식별자 전달
+    username = (
+        (request.form.get("github_username") or "").strip()       # 수정 폼(hidden)
+        or (request.form.get("github_username_new") or "").strip() # 신규 폼(text)
+    )
+
     if not username:
         return "github_username is required", 400
 
@@ -101,7 +105,22 @@ def update_member():
             target = m
             break
     if not target:
-        return "Member not found", 404
+        target = {
+            "name": "",
+            "english_name": "",
+            "intro": "",
+            "role": [],
+            "major": [],
+            "image": "memozi_subin.png", #기본이미지  
+            "phone": "",
+            "email": "",
+            "github_username": username,
+            "github_profile": f"https://github.com/{username}",
+            "portfolio_link": "",
+            "portfolio_file": "",
+            "portfolio": []
+        }
+        members.append(target)
 
     # 단일 필드 업데이트
     target["name"] = (request.form.get("name") or "").strip()
@@ -110,7 +129,6 @@ def update_member():
     target["phone"] = (request.form.get("phone") or "").strip()
     target["email"] = (request.form.get("email") or "").strip()
     target["portfolio_link"] = (request.form.get("portfolio_link") or "").strip()
-    target["portfolio_file"] = (request.form.get("portfolio_file") or "").strip()
     auto_profile_url = f"https://github.com/{username}"
     target["github_profile"] = auto_profile_url
 
@@ -127,41 +145,62 @@ def update_member():
     target["major"] = majors if majors else target.get("major", [])
 
     # ✅ 파일 업로드 처리
+    # ✅ 파일 업로드 처리 (수정됨)
     old_file = (request.form.get("portfolio_file_old") or "").strip()
     remove_flag = request.form.get("remove_portfolio_file") == "1"
     file = request.files.get("portfolio_upload")
-    if remove_flag and old_file:
+
+    UPLOAD_DIR = app.config["UPLOAD_FOLDER"]
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+    def safe_remove(path):
+        """파일 안전 삭제"""
         try:
-            os.remove(os.path.join(app.config["UPLOAD_FOLDER"], old_file))
+            if path and os.path.exists(path):
+                os.remove(path)
         except Exception:
             pass
+
+    # -----------------------------
+    # 1) 체크박스 눌렀을 때 → 파일 삭제
+    # -----------------------------
+    if remove_flag:
+        if old_file:
+            safe_remove(os.path.join(UPLOAD_DIR, old_file))
         target["portfolio_file"] = ""
 
-    # 🔸 새 파일 업로드된 경우 (교체)
+    # -----------------------------
+    # 2) 새 파일 업로드한 경우 → 교체
+    # -----------------------------
     elif file and file.filename:
         if not allowed_file(file.filename):
             return "허용되지 않는 파일 형식입니다.", 400
 
-        os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
         base = secure_filename(file.filename)
-
         save_name = base
         i = 1
-        while os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"], save_name)):
+        while os.path.exists(os.path.join(UPLOAD_DIR, save_name)):
             name, ext = os.path.splitext(base)
             save_name = f"{name}_{i}{ext}"
             i += 1
 
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], save_name))
+        # 파일 저장
+        file.save(os.path.join(UPLOAD_DIR, save_name))
 
-        # 기존 파일 있으면 정리(선택)
-        if old_file:
-            try:
-                os.remove(os.path.join(app.config["UPLOAD_FOLDER"], old_file))
-            except Exception:
-                pass
+        # 이전 파일이 있으면 삭제
+        if old_file and old_file != save_name:
+            safe_remove(os.path.join(UPLOAD_DIR, old_file))
 
+        # 새 파일명 반영
         target["portfolio_file"] = save_name
+
+    # -----------------------------
+    # 3) 아무것도 안 한 경우 → 기존 유지
+    # -----------------------------
+    else:
+        # 파일 관련 변경이 없으면 기존 파일 그대로 둠
+        target["portfolio_file"] = old_file
+
 
     # ✅ 포트폴리오 항목들 (다중)
     titles = request.form.getlist("project_title[]")
@@ -191,12 +230,74 @@ def update_member():
     # 완료 후 상세 페이지로
     return redirect(url_for("member_detail", username=username))
 
+
+
 # 비상 연락망 페이지
 @app.route("/contact")
 def contact():
     members = load_members()
     return render_template("contact.html", members=members)
 
+def delete_file_safely(path):
+    """존재하면 조용히 삭제"""
+    try:
+        if path and os.path.exists(path):
+            os.remove(path)
+    except Exception:
+        pass
+
+def is_file_used_by_others(members, key, filename, except_username=None):
+    """같은 파일명을 다른 멤버가 쓰는지 확인 (중복 사용 방지용)"""
+    if not filename:
+        return True  # filename이 없으면 삭제할 게 없음
+    for m in members:
+        if m.get("github_username") == except_username:
+            continue
+        if m.get(key) == filename:
+            return True
+    return False
+
+@app.route("/member/delete", methods=["POST"])
+def delete_member():
+    username = (request.form.get("github_username") or "").strip()
+    if not username:
+        return "github_username is required", 400
+
+    members = load_members()
+
+    # 대상 멤버 찾기
+    idx = None
+    target = None
+    for i, m in enumerate(members):
+        if m.get("github_username") == username:
+            idx = i
+            target = m
+            break
+
+    if idx is None:
+        return "Member not found", 404
+
+    # 삭제 전에 첨부 파일 정리 (다른 멤버가 안 쓰면 지움)
+    static_root = app.static_folder
+
+    # 1) 포트폴리오 파일
+    pf_file = target.get("portfolio_file")
+    if pf_file and not is_file_used_by_others(members, "portfolio_file", pf_file, except_username=username):
+        delete_file_safely(os.path.join(static_root, "files", pf_file))
+
+    # 2) 프로필 이미지 (기본 이미지면 건드리지 않음)
+    img_file = target.get("image")
+    default_images = {"default.png", "default.jpg", "default.jpeg", "default.webp"}
+    if img_file and img_file not in default_images:
+        if not is_file_used_by_others(members, "image", img_file, except_username=username):
+            delete_file_safely(os.path.join(static_root, "img", img_file))
+
+    # 실제 멤버 제거
+    del members[idx]
+    save_members(members)
+
+    # 목록으로
+    return redirect(url_for("result"))
 
 # -----------------------------
 # 3) 앱 실행

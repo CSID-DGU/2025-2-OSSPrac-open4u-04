@@ -52,9 +52,16 @@
   <h3>Together, We Build</h3>
   <h2>Behind the Scenes of Open4U</h2>
   <div class="video-container">
-    <div class="video-placeholder">
-      <p> Behind the Scenes 영상</p>
-    </div>
+    <video
+      class="behind-video"
+      controls
+      preload="metadata"
+      playsinline
+      poster="{{ url_for('static', filename='img/behind_poster.jpg') }}">
+      <source src="{{ url_for('static', filename='video/behindthescenes.mp4') }}" type="video/mp4">
+      브라우저가 동영상을 지원하지 않아요.
+      <a href="{{ url_for('static', filename='video/behindthescenes.mp4') }}">영상 다운로드</a>
+    </video>
   </div>
 </section>
 
