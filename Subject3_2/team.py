@@ -145,7 +145,6 @@ def update_member():
     target["major"] = majors if majors else target.get("major", [])
 
     # ✅ 파일 업로드 처리
-    # ✅ 파일 업로드 처리 (수정됨)
     old_file = (request.form.get("portfolio_file_old") or "").strip()
     remove_flag = request.form.get("remove_portfolio_file") == "1"
     file = request.files.get("portfolio_upload")
@@ -249,7 +248,7 @@ def delete_file_safely(path):
 def is_file_used_by_others(members, key, filename, except_username=None):
     """같은 파일명을 다른 멤버가 쓰는지 확인 (중복 사용 방지용)"""
     if not filename:
-        return True  # filename이 없으면 삭제할 게 없음
+        return True  
     for m in members:
         if m.get("github_username") == except_username:
             continue
@@ -277,7 +276,7 @@ def delete_member():
     if idx is None:
         return "Member not found", 404
 
-    # 삭제 전에 첨부 파일 정리 (다른 멤버가 안 쓰면 지움)
+    # 삭제 전에 첨부 파일 정리
     static_root = app.static_folder
 
     # 1) 포트폴리오 파일

@@ -6,7 +6,6 @@
   <h2>{{ '멤버 정보 입력' if is_new else '멤버 정보 수정' }}</h2>
 
   <form method="POST" action="{{ url_for('update_member') }}" enctype="multipart/form-data">
-    {# 수정 모드일 때만 숨김식별자 #}
     {% if not is_new and member %}
       <input type="hidden" name="github_username" value="{{ member.github_username }}"/>
     {% endif %}
@@ -23,7 +22,6 @@
       <input type="text" name="intro" value="{{ member.intro if member else '' }}">
     </label>
 
-    {# 역할 체크박스 #}
     <div class="field-group">
       <label>역할</label>
       {% set roles = (member.role if (member and member.role is iterable and member.role is not string) else []) %}
@@ -43,7 +41,6 @@
       </div>
     </div>
 
-    {# 전공 여러개 입력 #}
     <div class="field-group">
       <label>전공</label>
       <div id="majorList">
@@ -73,7 +70,6 @@
       <input type="email" name="email" value="{{ member.email if member else '' }}">
     </label>
 
-    {# 신규일 땐 GitHub Username을 입력받아야 함 #}
     <label>GitHub Username
       {% if is_new %}
         <input type="text" name="github_username_new" placeholder="GitHub Username" required>
@@ -88,7 +84,6 @@
       </label>
     </div>
 
-    {# 파일 업로드: 수정 모드일 때만 기존 파일 노출 #}
     <div class="field-group">
       <label>포트폴리오 파일 (PDF, PPTX 등)</label>
 
@@ -109,7 +104,6 @@
       <p class="hint">※ 새 파일을 업로드하면 기존 파일을 교체합니다.</p>
     </div>
 
-    {# 포트폴리오 프로젝트: 신규면 빈 1행 #}
     <div class="field-group">
       <label>포트폴리오 프로젝트</label>
       <div id="portfolioList">

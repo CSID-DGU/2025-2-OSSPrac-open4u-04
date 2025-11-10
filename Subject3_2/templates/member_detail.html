@@ -73,12 +73,12 @@
 
   {% if member.portfolio and member.portfolio|length > 0 %}
   <section class="member-portfolio">
-    <!-- 🔧 Portfolio 제목 + 액션 아이콘 -->
+    <!--Portfolio 제목 + 액션 아이콘 -->
     <div class="portfolio-title">
       <h3>Portfolio</h3>
 
       <div class="portfolio-actions">
-        <!-- 🔗 링크 아이콘 -->
+        <!--링크 아이콘 -->
         <a
           href="{{ member.portfolio_link or '#' }}"
           target="_blank"
@@ -91,7 +91,7 @@
           <img src="{{ url_for('static', filename='icons/link.png') }}" alt="link icon">
         </a>
 
-        <!-- ⬇️ 다운로드 아이콘 -->
+        <!--다운로드 아이콘 -->
         <a
           href="{{ url_for('static', filename='files/' ~ member.portfolio_file) if member.portfolio_file else '#' }}"
           class="pf-action pf-action--file"

@@ -9,7 +9,6 @@
 <body>
 
   <!-- ✅ 상단 네비게이션 -->
-  <!-- 상단 네비게이션 -->
   <nav class="navbar">
     <div class="logo">open4u</div>
 
@@ -41,15 +40,12 @@
   </nav>
 
   <!-- ✅ 본문 영역 -->
-  <!-- 본문 영역 -->
   {% block content %}{% endblock %}
 
   <!-- ✅ 배경음 -->
-  <!-- 배경음 -->
   <audio id="bgm" src="{{ url_for('static', filename='audio/bgm.mp3') }}" autoplay loop></audio>
 
   <!-- ✅ 소리 토글 스크립트 -->
-  <!-- 소리 토글 스크립트 -->
   <script>
     const soundToggle = document.getElementById("soundToggle");
     const bgm = document.getElementById("bgm");
