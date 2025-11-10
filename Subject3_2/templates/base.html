@@ -24,11 +24,26 @@
       </li>
 
       <li class="divider">|</li>
-      <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Team</a></li>
+      <li>
+        <a href="{{ url_for('index') }}"
+          class="{% if request.path == '/' %}active{% endif %}">
+          Team
+        </a>
+      </li>
       <li class="divider">|</li>
-      <li><a href="/member" class="{% if request.path == '/member' %}active{% endif %}">Member</a></li>
+      <li>
+        <a href="{{ url_for('result') }}"
+          class="{% if '/result' in request.path %}active{% endif %}">
+          Member
+        </a>
+      </li>
       <li class="divider">|</li>
-      <li><a href="/contact" class="{% if request.path == '/contact' %}active{% endif %}">Contact</a></li>
+      <li>
+        <a href="{{ url_for('contact') }}"
+          class="{% if request.path == '/contact' %}active{% endif %}">
+          Contact
+        </a>
+      </li>
     </ul>
   </nav>
 

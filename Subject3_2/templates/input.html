@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Edit Member | open4u{% endblock %}
+
+{% block content %}
+<section class="edit-member">
+  <h2>멤버 정보 수정</h2>
+
+  {% if member %}
+  <form>
+    <label>이름
+      <input type="text" name="name" value="{{ member.name }}">
+    </label>
+
+    <label>영어 이름
+      <input type="text" name="english_name" value="{{ member.english_name }}">
+    </label>
+
+    <label>한줄 소개
+      <input type="text" name="intro" value="{{ member.intro }}">
+    </label>
+
+    <label>역할
+      <input type="text" name="role" value="{{ member.role }}">
+    </label>
+
+    <label>전공
+      <input type="text" name="major" value="{{ member.major }}">
+    </label>
+
+    <label>전화번호
+      <input type="text" name="phone" value="{{ member.phone }}">
+    </label>
+
+    <label>이메일
+      <input type="email" name="email" value="{{ member.email }}">
+    </label>
+
+    <label>GitHub Username
+      <input type="text" name="github_username" value="{{ member.github_username }}">
+    </label>
+
+    <button type="button" onclick="history.back()">뒤로가기</button>
+  </form>
+  {% else %}
+    <p>멤버 정보가 없습니다.</p>
+  {% endif %}
+</section>
+{% endblock %}

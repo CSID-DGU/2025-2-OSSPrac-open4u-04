@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ member.name }} | open4u{% endblock %}
+
+{% block content %}
+<section class="member-detail">
+
+  <div class="member-header">
+    <div class="member-photo">
+      <img src="{{ url_for('static', filename='img/' ~ member.image) }}" alt="{{ member.name }}">
+    </div>
+
+    <div class="member-main-info">
+      <p class="member-intro">{{ member.intro }}</p>
+
+      <h2 class="member-kor-name">{{ member.name }}</h2>
+      <p class="member-eng-name">{{ member.english_name }}</p>
+
+      <ul class="member-meta">
+        {% if member.role %}
+        <li>
+          <span class="icon icon-role"></span>
+          <span>{{ member.role }}</span>
+        </li>
+        {% endif %}
+
+        {% if member.major %}
+        <li>
+          <span class="icon icon-major"></span>
+          <span>{{ member.major }}</span>
+        </li>
+        {% endif %}
+
+        {% if member.phone %}
+        <li>
+          <span class="icon icon-phone"></span>
+          <span>{{ member.phone }}</span>
+        </li>
+        {% endif %}
+
+        {% if member.email %}
+        <li>
+          <span class="icon icon-email"></span>
+          <a href="mailto:{{ member.email }}">{{ member.email }}</a>
+        </li>
+        {% endif %}
+
+        {% if member.github_profile %}
+        <li>
+          <span class="icon icon-github"></span>
+          <a href="{{ member.github_profile }}" target="_blank">
+            {{ member.github_username }}
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+
+      <div class="detail-buttons">
+        <!-- 수정 페이지 이동 -->
+        <a class="btn-edit"
+           href="{{ url_for('input_page', username=member.github_username) }}">
+          수정
+        </a>
+        <!-- 목록 페이지로 돌아가기 -->
+        <a class="btn-back" href="{{ url_for('result') }}">목록으로</a>
+      </div>
+    </div>
+  </div>
+
+  {% if member.portfolio and member.portfolio|length > 0 %}
+  <section class="member-portfolio">
+    <h3>Portfolio</h3>
+    <table class="portfolio-table">
+      <thead>
+        <tr>
+          <th>프로젝트명</th>
+          <th>기간</th>
+          <th>역할</th>
+          <th>설명</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in member.portfolio %}
+        <tr>
+          <td>{{ p.project_title }}</td>
+          <td>{{ p.period }}</td>
+          <td>{{ p.role }}</td>
+          <td>{{ p.description }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+</section>
+{% endblock %}

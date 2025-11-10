@@ -34,13 +34,13 @@
   <div class="team-grid">
 
     {% for m in members %}
-    <div class="card" onclick="alert('{{ m.name }}의 상세페이지')">
+    <a class="card" href="{{ url_for('member_detail', username=m.github_username) }}">
       <div class="card-header">
         <span class="member-name">{{ m.name }}</span>
         <span class="member-role">{{ m.role }}</span>
       </div>
-      <img src="{{ url_for('static', filename='img/' + m.image) }}" alt="{{ m.name }}">
-    </div>
+      <img src="{{ url_for('static', filename='img/' ~ m.image) }}" alt="{{ m.name }}">
+    </a>
     {% endfor %}
 
   </div>
@@ -56,6 +56,13 @@
       <p> Behind the Scenes 영상</p>
     </div>
   </div>
+</section>
+
+<!--  비상연락망 버튼  -->
+<section class="emergency-contact">
+  <a href="{{ url_for('contact') }}" target="_blank" class="btn-contact">
+    비상연락망
+  </a>
 </section>
 
 {% endblock %}
