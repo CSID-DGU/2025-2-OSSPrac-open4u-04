@@ -37,7 +37,7 @@
     <a class="card" href="{{ url_for('member_detail', username=m.github_username) }}">
       <div class="card-header">
         <span class="member-name">{{ m.name }}</span>
-        <span class="member-role">{{ m.role }}</span>
+        <span class="member-role">{{ m.role | join(', ') }}</span>
       </div>
       <img src="{{ url_for('static', filename='img/' ~ m.image) }}" alt="{{ m.name }}">
     </a>

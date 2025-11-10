@@ -6,7 +6,10 @@
   <h2>멤버 정보 수정</h2>
 
   {% if member %}
-  <form>
+  <form method="POST" action="{{ url_for('update_member') }}" enctype="multipart/form-data">
+    <!-- 누구를 수정하는지 식별 -->
+    <input type="hidden" name="github_username" value="{{ member.github_username }}"/>
+
     <label>이름
       <input type="text" name="name" value="{{ member.name }}">
     </label>
@@ -19,13 +22,53 @@
       <input type="text" name="intro" value="{{ member.intro }}">
     </label>
 
-    <label>역할
-      <input type="text" name="role" value="{{ member.role }}">
-    </label>
+    <!-- ✅ 역할: 여러 개 입력 -->
+    <div class="field-group">
+      <label>역할</label>
+      {# 역할 값을 리스트로 정규화 (문자열로 저장된 케이스 대비) #}
+      {% set roles = member.role if member.role is iterable and member.role is not string else [member.role] %}
+      {% set roles = roles | select('string') | list %}
 
-    <label>전공
-      <input type="text" name="major" value="{{ member.major }}">
-    </label>
+      <div class="checkbox-group">
+        <label class="checkbox">
+          <input type="checkbox" name="role[]" value="Team Leader"
+                {% if 'Team Leader' in roles %}checked{% endif %}>
+          <span>Team Leader</span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="role[]" value="Frontend"
+                {% if 'Frontend' in roles %}checked{% endif %}>
+          <span>Frontend</span>
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" name="role[]" value="Backend"
+                {% if 'Backend' in roles %}checked{% endif %}>
+          <span>Backend</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- ✅ 전공: 여러 개 입력 -->
+    <div class="field-group">
+      <label>전공</label>
+      <div id="majorList">
+        {% set majors = member.major if member.major is iterable and member.major is not string else [member.major] %}
+        {% for m in majors if m %}
+          <div class="row">
+            <input type="text" name="major[]" value="{{ m }}">
+            <button type="button" class="btn-mini" onclick="this.parentNode.remove()">삭제</button>
+          </div>
+        {% endfor %}
+        {% if majors|length == 0 %}
+          <div class="row">
+            <input type="text" name="major[]" placeholder="예: MIS, SW Convergence">
+            <button type="button" class="btn-mini" onclick="this.parentNode.remove()">삭제</button>
+          </div>
+        {% endif %}
+      </div>
+      <button type="button" class="btn-mini" onclick="addRow('majorList','major[]')">+ 추가</button>
+    </div>
 
     <label>전화번호
       <input type="text" name="phone" value="{{ member.phone }}">
@@ -36,11 +79,198 @@
     </label>
 
     <label>GitHub Username
-      <input type="text" name="github_username" value="{{ member.github_username }}">
+      <input type="text" name="github_username_view" value="{{ member.github_username }}" disabled>
     </label>
 
-    <button type="button" onclick="history.back()">뒤로가기</button>
+    <!-- ✅ 포트폴리오 링크/파일 -->
+    <div class="field-group">
+      <label>포트폴리오 링크
+        <input type="url" name="portfolio_link" value="{{ member.portfolio_link or '' }}" placeholder="https://...">
+      </label>
+    </div>
+
+    <!-- 🔽 포트폴리오 파일 업로드 섹션 -->
+    <div class="field-group">
+      <label>포트폴리오 파일 (PDF, PPTX 등)</label>
+
+      {# ✅ 현재 저장된 파일 보여주기 (미리보기/다운로드 링크) #}
+      {% if member.portfolio_file %}
+        <div class="current-file">
+          현재 파일:
+          <a href="{{ url_for('static', filename='files/' ~ member.portfolio_file) }}"
+            target="_blank" download>
+            {{ member.portfolio_file }}
+          </a>
+          <input type="hidden" name="portfolio_file_old" value="{{ member.portfolio_file }}">
+          <label class="checkbox-inline">
+            <input type="checkbox" name="remove_portfolio_file" value="1">
+            이 파일 삭제
+          </label>
+        </div>
+      {% else %}
+        <p class="muted">현재 저장된 파일 없음</p>
+      {% endif %}
+
+      <!-- 새 파일 업로드 -->
+      <input type="file" name="portfolio_upload"
+            accept=".pdf,.ppt,.pptx,.doc,.docx,.zip">
+      <p class="hint">※ 새 파일을 업로드하면 기존 파일을 교체합니다.</p>
+    </div>
+
+
+    <!-- ✅ 포트폴리오 프로젝트 리스트 -->
+    <div class="field-group">
+      <label>포트폴리오 프로젝트</label>
+
+      <div id="portfolioList">
+
+        {# 기존 데이터가 있으면 미리 채워 표시 #}
+        {% if member.portfolio %}
+          {% for p in member.portfolio %}
+            {# 공백 제거 + 하이픈 -> en-dash 정규화 #}
+            {% set _clean = (p.period or '').replace(' ', '').replace('-', '–') %}
+
+            {# 구분자 위치 찾기 #}
+            {% set _sep_index = _clean.find('–') %}
+
+            {# 구분자가 있으면 앞/뒤로 나누고, 없으면 전부 start 로 처리 #}
+            {% if _sep_index != -1 %}
+              {% set _start = _clean[:_sep_index] %}
+              {% set _end   = _clean[_sep_index+1:] %}
+            {% else %}
+              {% set _start = _clean %}
+              {% set _end   = '' %}
+            {% endif %}
+
+            {# YYYY.MM -> YYYY-MM 로 바꿔서 month input에 맞춤 #}
+            {% set _start_month = (_start|replace('.', '-')) if _start else '' %}
+            {% set _end_month   = (_end|replace('.', '-')) if _end else '' %}
+
+
+            <div class="portfolio-row">
+              <div class="field-line">
+                <input type="text" name="project_title[]" value="{{ p.project_title }}" placeholder="프로젝트명">
+              </div>
+
+              <div class="period-line">
+                <input type="month" name="start_month[]" value="{{ _start_month[:7] }}">
+                <span class="dash">–</span>
+                <input type="month" name="end_month[]" value="{{ _end_month[:7] }}">
+              </div>
+
+              <div class="field-line">
+                <input type="text" name="proj_role[]" value="{{ p.role }}" placeholder="역할">
+              </div>
+
+              <div class="field-line">
+                <input type="text" name="description[]" value="{{ p.description }}" placeholder="설명">
+              </div>
+
+              <input type="hidden" name="period[]" value="{{ p.period }}">
+
+              <div class="row-actions">
+                <button type="button" class="btn-mini danger" onclick="this.closest('.portfolio-row').remove()">삭제</button>
+              </div>
+            </div>
+
+          {% endfor %}
+        {% else %}
+          <!-- 초기 1행 -->
+          <div class="portfolio-row">
+            <div class="field-line">
+              <input type="text" name="project_title[]" placeholder="프로젝트명">
+            </div>
+            <div class="period-line">
+              <input type="month" name="start_month[]">
+              <span class="dash">–</span>
+              <input type="month" name="end_month[]">
+            </div>
+            <div class="field-line">
+              <input type="text" name="proj_role[]" placeholder="역할">
+            </div>
+            <div class="field-line">
+              <input type="text" name="description[]" placeholder="설명">
+            </div>
+            <input type="hidden" name="period[]" value="">
+            <div class="row-actions">
+              <button type="button" class="btn-mini danger" onclick="this.closest('.portfolio-row').remove()">삭제</button>
+            </div>
+          </div>
+
+        {% endif %}
+      </div>
+
+      <button type="button" class="btn-mini" onclick="addPortfolioRow()">+ 프로젝트 추가</button>
+    </div>
+
+
+    <!-- 하단 버튼 -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">수정완료</button>
+      <button type="button" class="btn" onclick="history.back()">뒤로가기</button>
+    </div>
   </form>
+
+  <script>
+    function addRow(containerId, fieldName) {
+      const box = document.getElementById(containerId);
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <input type="text" name="${fieldName}" />
+        <button type="button" class="btn-mini" onclick="this.parentNode.remove()">삭제</button>
+      `;
+      box.appendChild(row);
+    }
+
+    // YYYY-MM -> YYYY.MM
+  function ymToDot(ym) {
+    if (!ym) return '';
+    const [y, m] = ym.split('-');
+    if (!y || !m) return '';
+    return `${y}.${m.padStart(2,'0')}`;
+  }
+
+  function bakePeriodsBeforeSubmit(formEl) {
+    const rows = formEl.querySelectorAll('.portfolio-row');
+    rows.forEach(row => {
+      const start = row.querySelector('input[name="start_month[]"]')?.value || '';
+      const end   = row.querySelector('input[name="end_month[]"]')?.value || '';
+      const periodHidden = row.querySelector('input[name="period[]"]');
+
+      const s = ymToDot(start);
+      const e = ymToDot(end);
+      const period = (s && e) ? `${s}–${e}` : (s || e); 
+      if (periodHidden) periodHidden.value = period;
+    });
+  }
+
+  function addPortfolioRow() {
+    const box = document.getElementById('portfolioList');
+    const row = document.createElement('div');
+    row.className = 'portfolio-row';
+    row.innerHTML = `
+      <input type="text" name="project_title[]" placeholder="프로젝트명" class="w-30">
+      <input type="month" name="start_month[]" class="w-18">
+      <span class="dash">–</span>
+      <input type="month" name="end_month[]" class="w-18">
+      <input type="text" name="proj_role[]" placeholder="역할" class="w-18">
+      <input type="text" name="description[]" placeholder="설명" class="w-100">
+      <input type="hidden" name="period[]" value="">
+      <button type="button" class="btn-mini danger" onclick="this.parentNode.remove()">삭제</button>
+    `;
+    box.appendChild(row);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form[action="{{ url_for('update_member') }}"]');
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+      bakePeriodsBeforeSubmit(form);
+    });
+  });
+  </script>
+
   {% else %}
     <p>멤버 정보가 없습니다.</p>
   {% endif %}
