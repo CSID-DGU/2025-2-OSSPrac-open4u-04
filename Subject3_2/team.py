@@ -42,8 +42,8 @@ def save_members(members):
 # 🔸 1. 홈 페이지
 @app.route('/')
 def index():
-    return render_template('index.html')
-
+    members = load_members()  
+    return render_template('index.html', members=members)
 
 # 🔸 2. 팀원 입력/수정 페이지 (C: Create, U: Update)
 @app.route('/input', methods=['GET', 'POST'])
@@ -128,7 +128,8 @@ def member_detail(id):
 # 🔸 5. 연락처 페이지
 @app.route('/contact')
 def contact_info():
-    return render_template('contact.html')
+    members = load_members()  
+    return render_template('contact.html', members=members)
 
 
 # ----------------------------------------------------
