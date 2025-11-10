@@ -1,0 +1,392 @@
+/*Pretendard 폰트*/
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../fonts/Pretendard-Regular.woff2') format('woff2'),
+       url('../fonts/Pretendard-Medium.woff2') format('woff2'),
+       url('../fonts/Pretendard-Bold.woff2') format('woff2');
+}
+
+/* 기본 설정 */
+body {
+  font-family: 'Pretendard', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #222;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* 헤더 통일*/
+
+/* Introduce Our Team */
+.hero h2,
+.team h2 {
+  font-size: 1.5rem;            /* 동일한 크기 */
+  font-weight: 500;           /* 살짝 두껍게 */
+  color: #444;                /* 중간톤 */
+  text-transform: none;       /* 대문자 방지 */
+  letter-spacing: 0.5px;      /* 살짝 간격 */
+  margin-bottom: 8px;         /* 아래 간격 통일 */
+}
+
+
+
+
+/* 상단 네비게이션 */
+.navbar {
+  background-color: #1f2230; 
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 50px;
+  height: 55px; 
+}
+
+.logo { 
+  font-weight: 700;
+  font-size: 2rem;
+  color: white;
+  margin: 0;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+/* 소리 버튼 */
+.sound-toggle {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  margin-right: 10px;
+  vertical-align: middle;
+  transition: opacity 0.3s ease;
+}
+
+.sound-toggle:hover {
+  opacity: 0.7;
+}
+
+
+/* 메뉴 링크 */
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+  opacity: 0.7;
+}
+
+/* 현재 페이지 초록색 강조 */
+.nav-links a.active {
+  color: #9cff8c;
+  font-weight: 600;
+}
+
+/* 구분선 | */
+.divider {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.1rem;
+  user-select: none;
+}
+
+/* 비상연락망(표)*/
+.contact {
+  text-align: center;
+  padding: 100px 30px;
+  background-color: #ffffff;
+}
+
+.contact h2 {
+  font-size: 1.5rem;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.contact h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1f2230;
+  margin-bottom: 60px;
+}
+
+/* 표 전체 박스 */
+.table-container {
+  display: flex;
+  justify-content: center;
+}
+
+.contact-table {
+  border-collapse: collapse;
+  width: 80%;
+  max-width: 800px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+  border-radius: 14px;
+  overflow: hidden;
+  font-size: 1.1rem;
+  background-color: #fff;
+}
+
+/* 헤더 */
+.contact-table thead {
+  background-color: #1f2230;
+  color: #fff;
+}
+
+.contact-table th {
+  padding: 16px;
+  font-weight: 600;
+}
+
+/* 셀 스타일 */
+.contact-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+/* 마지막 줄 밑줄 제거 */
+.contact-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* hover 효과 */
+.contact-table tr:hover {
+  background-color: #f8fff4;
+}
+
+/* 이메일 링크 */
+.contact-table a {
+  color: #1f2230;
+  text-decoration: none;
+}
+
+.contact-table a:hover {
+  text-decoration: underline;
+}
+
+
+/* 팀 이름 설명 */
+.hero {
+  text-align: center;
+  padding: 60px 30px 20px;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.main-title { /* Open4U */
+  font-size: 4.5rem; /* 글자 크기 */
+  font-weight: 800;  /* 글자 두께 */
+  color: #1f2230;
+  margin: 10px 0 20px;
+  letter-spacing: -0.5px;
+}
+
+
+.subtitle {
+  font-size: 1.15rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.dots {
+  line-height: 1; 
+  margin: 5px 0 15px; 
+  font-size: 1.2rem; 
+  color: #444; 
+}
+
+
+.desc {
+  font-size: 1.05rem;
+  color: #444;
+  line-height: 1.9;
+  margin: 0 auto 40px;
+  max-width: 700px;
+}
+
+/* 클로버 이미지  */
+.clover {
+  display: block;
+  margin: 25px auto 10px; /* 아래 여백  */
+  width: 240px;
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.2));
+  transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+/* 전체적으로 공간 정리 */
+.hero p {
+  margin: 8px 0;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 3rem;
+  }
+  .clover {
+    width: 150px;
+  }
+}
+
+
+/* 팀 섹션*/
+.team {
+  text-align: center;
+  padding: 60px 0 80px;
+  background-color: #ffffff;
+}
+
+
+/* 'Our Team Member' */
+.team h1 {
+  font-size: 3.5rem;   
+  font-weight: 800;   
+  margin-bottom: 60px;
+  color: #1f2230;
+  letter-spacing: -0.5px;
+}
+
+
+/* 카드 배치 */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 카드 세부 내용 */
+.card {
+  background-color: #f4ffe8;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 25px 20px 0; 
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: auto; 
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* 이름 + 역할 */
+.card-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 6px;
+  padding-left: 5px;
+}
+
+.member-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1d1d1d;
+}
+
+.member-role {
+  font-size: 0.95rem;
+  color: #666;
+  font-weight: 400;
+}
+
+/* 미모지 */
+.card img {
+  width: 230px;     
+  height: auto;
+  object-fit: contain;
+  margin-top: 10px;
+  margin-bottom: 0; 
+  align-self: center; 
+}
+
+
+
+
+.behind {
+  text-align: center;
+  padding: 90px 30px;
+  background-color: #ffffff;
+}
+
+/* 소제목: Together, We Build */
+.behind h3 {
+  font-size: 1.5rem;        
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* 대제목: Behind the Scenes of Open4U */
+.behind h2 {
+  font-size: 3.5rem;        
+  font-weight: 800;
+  color: #1f2230;
+  margin-bottom: 40px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+
+.video-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 400px;
+  border: 2px dashed #cfcfcf;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  background-color: #ffffff;
+}
+
+.video-placeholder p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2.3rem;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 20px;
+  }
+}
+
