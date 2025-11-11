@@ -13,6 +13,7 @@ body {
   font-family: 'Pretendard', sans-serif;
   margin: 0;
   padding: 0;
+  padding-top: 75px;
   background-color: #ffffff;
   color: #1E1E1E;
   overflow-x: hidden;
@@ -45,7 +46,15 @@ body {
   align-items: center;
   padding: 10px 50px;
   height: 55px; 
+
+  /* ⭐️ 상단 고정을 위한 필수 속성 ⭐️ */
+  position: fixed;   /* 뷰포트(화면)에 대해 위치 고정 */
+  top: 0;            /* 화면의 최상단(0px)에 위치 */
+  width: 100%;       /* 고정 후 너비를 전체 화면으로 확장 */
+  z-index: 1000;     /* 다른 요소 위에 항상 보이도록 설정 (권장) */
+  box-sizing: border-box;
 }
+
 
 .logo { 
   font-weight: 700;
