@@ -1,6 +1,6 @@
 services:
   app:
     build: .
-    image: eosubin/team-intro-web:latest
+    image: ${DOCKER_USR}/team-intro-web
     ports:
       - "8000:8000"
