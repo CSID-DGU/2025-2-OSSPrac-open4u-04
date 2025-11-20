@@ -1,0 +1,50 @@
+// Pipeline Script for Jenkins Web Application
+
+pipeline {
+    agent any  
+
+    triggers {
+            pollSCM('H/3 * * * *')
+    } 
+
+    environment {
+        DOCKER = credentials('dockerhub')    
+    } 
+
+    stages {
+        stage('Prepare') {
+            steps {                         
+                        git url : 'https://github.com/CSID-DGU/2025-2-OSSPrac-open4u-04.git',
+                        branch : 'main',
+                        credentialsId: 'github'
+            }
+        }
+
+
+        stage('Build') {
+
+            steps {
+                dir('Subject3_2'){
+                    sh 'docker compose build app'
+                }
+           }
+        }
+
+        stage('Tag') {
+            steps {
+                script {
+                    sh "docker tag ${DOCKER_USR}/team-intro-web ${DOCKER_USR}/team-intro-web:${BUILD_NUMBER}"
+                }
+            }
+        }
+
+        stage('Push') {
+            steps {
+                script {
+                    sh "docker login -u $DOCKER_USR -p $DOCKER_PSW"
+                    sh "docker push ${DOCKER_USR}/team-intro-web:${BUILD_NUMBER}"
+                }
+            }
+        }
+    }
+}
